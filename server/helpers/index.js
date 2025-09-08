@@ -33,7 +33,7 @@ const getModelPopulationAttributes = (model) => {
   return model.attributes;
 };
 
-const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
+const getFullPopulateObject = (modelUid, maxDepth = 20, ignore, includeDuplicates) => {
   if (maxDepth <= 1) {
     return true;
   }
@@ -51,7 +51,8 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   for (const [key, value] of Object.entries(
     getModelPopulationAttributes(model)
   )) {
-    if (ignore?.includes(key) || value.private === true) continue;
+
+    if ((!includeDuplicates && ignore?.includes(key)) || value.private === true) continue;
     if (value) {
       if (value.type === "component") {
         populate[key] = getFullPopulateObject(value.component, maxDepth - 1, [...ignore]);
@@ -69,7 +70,8 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
           const relationPopulate = getFullPopulateObject(
             value.target,
             maxDepth - 1,
-            [...ignore]
+            [...ignore],
+            includeDuplicates
           );
           if (relationPopulate) {
             populate[key] = relationPopulate;

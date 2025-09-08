@@ -58,7 +58,8 @@ module.exports = ({ env }) => ({
   'strapi-v5-plugin-populate-deep': {
     config: {
       defaultDepth: 3, // default: 5
-    },
+      includeDuplicates: true, // default: false
+    }
   },
 });
 ```
@@ -71,6 +72,9 @@ module.exports = ({ env }) => ({
 - Increasing depth may result in longer response times — use `pIgnore` to offset this.
 - `plugin::upload.file` related field is always excluded to avoid bloated responses.
 - `admin::user` (creator fields) can be excluded via `skipCreatorFields` config:
+- The `includeDuplicates` flag controls wether a shared relation is included multiple times in the response. If items `a` and `b` both have a relation to `c`, then with `includeDuplicates: false` (the default), item `c` would only appear under `b` in the API response.
+
+# Contributions
 
 ```js
 module.exports = ({ env }) => ({
