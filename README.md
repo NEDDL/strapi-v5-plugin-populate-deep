@@ -53,6 +53,12 @@ module.exports = ({ env }) => ({
 
 This configuration will set the default depth to 3 levels across all API requests unless specified otherwise in the request itself.
 
+# Contributors
+
+<a href="https://github.com/NEDDL/strapi-v5-plugin-populate-deep/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=NEDDL/strapi-v5-plugin-populate-deep" />
+</a>
+
 # Contributions
 
 This plugin is a fork of the original work by [Barelydead](https://github.com/Barelydead/) and can be found in the original [repository](https://github.com/Barelydead/strapi-plugin-populate-deep).
