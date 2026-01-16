@@ -1,6 +1,6 @@
 {
   "name": "strapi-v5-plugin-populate-deep",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "Strapi v5 plugin that populates nested content.",
   "strapi": {
     "name": "strapi-v5-plugin-populate-deep",
@@ -13,7 +13,8 @@
   },
   "contributors": [
     "Christofer Jungberg",
-    "Mustafa ONAL"
+    "Mustafa ONAL",
+    "chohner"
   ],
   "maintainers": [
     {
