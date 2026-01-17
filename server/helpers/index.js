@@ -31,10 +31,10 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
     if (ignore?.includes(key)) continue;
     if (value) {
       if (value.type === "component") {
-        populate[key] = getFullPopulateObject(value.component, maxDepth - 1);
+        populate[key] = getFullPopulateObject(value.component, maxDepth - 1, ignore);
       } else if (value.type === "dynamiczone") {
         const dynamicPopulate = value.components.reduce((prev, cur) => {
-          const curPopulate = getFullPopulateObject(cur, maxDepth - 1);
+          const curPopulate = getFullPopulateObject(cur, maxDepth - 1, ignore);
           return merge(prev, {[cur]: curPopulate});
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };

@@ -26,6 +26,15 @@ The plugin allows you to deeply populate data in your Strapi queries with a new 
 2. Populate a request with the a custom depth
    `/api/articles?pLevel=10`
 
+3. Ignore some fields
+```js
+strapi.documents(model).findMany({
+  pLevel: 10,
+  pIgnore: ['updatedBy', 'createdBy', 'permissions', 'role', 'users'],
+});
+```
+
+
 ## Good to know
 
 - The default maximum depth is 5 levels deep.
