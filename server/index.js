@@ -5,5 +5,10 @@ const config = require('./config')
 
 module.exports = {
   bootstrap,
-  config
+  config,
+  register: ({ strapi }) => {
+    strapi.contentAPI.addQueryParams({
+      pLevel: { schema: (z) => z.string().max(3).optional() },
+    });
+  }
 };
