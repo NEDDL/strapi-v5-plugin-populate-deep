@@ -1,4 +1,28 @@
-const { isEmpty, merge } = require("lodash/fp");
+const { isEmpty } = require("lodash/fp");
+
+const deepAssign = (target, source) => {
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      if (typeof source[key] === "object" && source[key] !== null) {
+        if (
+          !target[key] ||
+          typeof target[key] !== "object" ||
+          target[key] === null
+        ) {
+          target[key] = source[key];
+        }
+        deepAssign(target[key], source[key]);
+      } else if (
+        !target[key] ||
+        typeof target[key] !== "object" ||
+        target[key] === null
+      ) {
+        target[key] = source[key];
+      }
+    }
+  }
+  return target;
+};
 
 const getModelPopulationAttributes = (model) => {
   if (model.uid === "plugin::upload.file") {
@@ -11,8 +35,8 @@ const getModelPopulationAttributes = (model) => {
 
 const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   const skipCreatorFields = strapi
-      .plugin("strapi-v5-plugin-populate-deep")
-      ?.config("skipCreatorFields");
+    .plugin("strapi-v5-plugin-populate-deep")
+    ?.config("skipCreatorFields");
 
   if (maxDepth <= 1) {
     return true;
@@ -26,24 +50,24 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   if (ignore && !ignore.includes(model.collectionName))
     ignore.push(model.collectionName);
   for (const [key, value] of Object.entries(
-      getModelPopulationAttributes(model)
+    getModelPopulationAttributes(model)
   )) {
-    if (ignore?.includes(key)) continue;
+    if (ignore?.includes(key) || value.private === true) continue;
     if (value) {
       if (value.type === "component") {
-        populate[key] = getFullPopulateObject(value.component, maxDepth - 1);
+        populate[key] = getFullPopulateObject(value.component, maxDepth - 1, ignore);
       } else if (value.type === "dynamiczone") {
         const dynamicPopulate = value.components.reduce((prev, cur) => {
-          const curPopulate = getFullPopulateObject(cur, maxDepth - 1);
-          return merge(prev, {[cur]: curPopulate});
+          const curPopulate = getFullPopulateObject(cur, maxDepth - 1, ignore);
+          return curPopulate === true ? prev : deepAssign(prev, { [cur]: curPopulate });
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };
       } else if (value.type === "relation") {
         if (ignore?.includes(strapi.getModel(value.target).collectionName)) continue;
         const relationPopulate = getFullPopulateObject(
-            value.target,
-            key === "localizations" && maxDepth > 2 ? 1 : maxDepth - 1,
-            ignore
+          value.target,
+          key === "localizations" && maxDepth > 2 ? 1 : maxDepth - 1,
+          ignore
         );
         if (relationPopulate) {
           populate[key] = relationPopulate;

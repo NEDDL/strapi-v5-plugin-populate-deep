@@ -18,7 +18,10 @@ module.exports = ({ strapi }) => {
     const pLevel = params?.pLevel ?? ctx.query?.pLevel;
     if (pLevel === undefined) return;
 
+    const pIgnore = params?.pIgnore ?? ctx.query?.pIgnore ?? [];
+    const ignore = Array.isArray(pIgnore) ? pIgnore : [pIgnore];
+
     const depth = pLevel ? parseInt(pLevel, 10) : defaultDepth;
-    params.populate = getFullPopulateObject(model.uid, depth, []).populate;
+    params.populate = getFullPopulateObject(model.uid, depth, ignore).populate;
   });
 };
