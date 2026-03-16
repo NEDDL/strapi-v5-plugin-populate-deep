@@ -2,21 +2,23 @@
 const { getFullPopulateObject } = require("./helpers");
 
 module.exports = ({ strapi }) => {
-  // Subscribe to the lifecycles that we are intrested in.
+  const defaultDepth =
+    strapi.plugin("strapi-v5-plugin-populate-deep")?.config("defaultDepth") ||
+    5;
+
   strapi.db.lifecycles.subscribe((event) => {
-    if (event.action === "beforeFindMany" || event.action === "beforeFindOne") {
-      const level = event.params?.pLevel;
+    const { action, model, params } = event;
 
-      const defaultDepth =
-        strapi
-          .plugin("strapi-v5-plugin-populate-deep")
-          ?.config("defaultDepth") || 5;
+    if (!["beforeFindMany", "beforeFindOne"].includes(action)) return;
+    if (!model.uid.startsWith("api::")) return;
 
-      if (level !== undefined) {
-        const depth = level ?? defaultDepth;
-        const modelObject = getFullPopulateObject(event.model.uid, depth, []);
-        event.params.populate = modelObject.populate;
-      }
-    }
+    const ctx = strapi.requestContext.get();
+    if (!ctx?.request?.url?.startsWith("/api/")) return;
+
+    const pLevel = params?.pLevel ?? ctx.query?.pLevel;
+    if (pLevel === undefined) return;
+
+    const depth = pLevel ? parseInt(pLevel, 10) : defaultDepth;
+    params.populate = getFullPopulateObject(model.uid, depth, []).populate;
   });
 };
