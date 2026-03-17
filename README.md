@@ -7,7 +7,7 @@ A Strapi v5 plugin that enables deep population of nested content structures via
 [![npm total downloads](https://img.shields.io/npm/dt/strapi-v5-plugin-populate-deep)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
 [![license](https://img.shields.io/npm/l/strapi-v5-plugin-populate-deep)](./LICENSE)
 [![node](https://img.shields.io/node/v/strapi-v5-plugin-populate-deep)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
-[![bundle size](https://img.shields.io/bundlephobia/min/strapi-v5-plugin-populate-deep)](https://bundlephobia.com/package/strapi-v5-plugin-populate-deep)
+[![install size](https://packagephobia.com/badge?p=strapi-v5-plugin-populate-deep)](https://packagephobia.com/result?p=strapi-v5-plugin-populate-deep)
 [![GitHub stars](https://img.shields.io/github/stars/NEDDL/strapi-v5-plugin-populate-deep?style=social)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/NEDDL/strapi-v5-plugin-populate-deep?style=social)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/NEDDL/strapi-v5-plugin-populate-deep)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/issues)
