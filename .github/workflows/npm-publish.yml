@@ -17,8 +17,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org/
+
+      - name: Upgrade npm
+        run: npm install -g npm@latest
 
       - name: Check if version already on npm
         id: check
@@ -32,8 +35,4 @@ jobs:
 
       - name: Publish
         if: steps.check.outputs.exists == 'false'
-        run: |
-          unset NODE_AUTH_TOKEN
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete always-auth || true
-          npm publish --provenance --access public
+        run: npm publish --provenance --access public
