@@ -1,70 +1,92 @@
-# Strapi v5 Plugin: populate-deep
+# strapi-v5-plugin-populate-deep
 
-This plugin is a fork of the original [strapi-plugin-populate-deep](https://github.com/Barelydead/strapi-plugin-populate-deep), which does not support Strapi v5 at the time of this publication.
+A Strapi v5 plugin that enables deep population of nested content structures via a simple query parameter.
 
-## Why this Fork?
+[![npm version](https://img.shields.io/npm/v/strapi-v5-plugin-populate-deep?label=version&color=blue)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
+[![npm downloads](https://img.shields.io/npm/dm/strapi-v5-plugin-populate-deep?color=brightgreen)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
+[![npm total downloads](https://img.shields.io/npm/dt/strapi-v5-plugin-populate-deep)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
+[![license](https://img.shields.io/npm/l/strapi-v5-plugin-populate-deep)](./LICENSE)
+[![node](https://img.shields.io/node/v/strapi-v5-plugin-populate-deep)](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep)
+[![bundle size](https://img.shields.io/bundlephobia/min/strapi-v5-plugin-populate-deep)](https://bundlephobia.com/package/strapi-v5-plugin-populate-deep)
+[![GitHub stars](https://img.shields.io/github/stars/NEDDL/strapi-v5-plugin-populate-deep?style=social)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/NEDDL/strapi-v5-plugin-populate-deep?style=social)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/NEDDL/strapi-v5-plugin-populate-deep)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/NEDDL/strapi-v5-plugin-populate-deep)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/commits/main)
+[![GitHub contributors](https://img.shields.io/github/contributors/NEDDL/strapi-v5-plugin-populate-deep)](https://github.com/NEDDL/strapi-v5-plugin-populate-deep/graphs/contributors)
+[![Strapi v5](https://img.shields.io/badge/Strapi-v5-8C4BFF?logo=strapi)](https://strapi.io)
 
-With Strapi v5, a new [API structure validation feature](https://github.com/strapi/strapi/pull/21034) was introduced, which makes the populate parameter incompatible with how the original plugin works. This plugin addresses that by introducing a new parameter pLevel to avoid validation issues.
+## Installation
 
-# Installation
+```bash
+npm install strapi-v5-plugin-populate-deep
+# or
+yarn add strapi-v5-plugin-populate-deep
+```
 
-`npm install strapi-v5-plugin-populate-deep`
+## Usage
 
-`yarn add strapi-v5-plugin-populate-deep`
+Add `pLevel` to any API request to deeply populate the response.
 
-Also, the npm link is [here](https://www.npmjs.com/package/strapi-v5-plugin-populate-deep).
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `pLevel` | `number` (optional) | Depth of population. Omit the value to use the default depth. |
+| `pIgnore` | `string` or `string[]` (optional) | Fields or collection names to exclude from population. Accepts a comma-separated string or array. |
 
-# Usages
-
-The plugin allows you to deeply populate data in your Strapi queries with a new parameter pLevel. This parameter specifies the depth of population for your API responses.
-
-## Examples
-
-1. Populate a request with the default max depth.
-   `/api/articles?pLevel`
-
-2. Populate a request with the a custom depth
-   `/api/articles?pLevel=10`
-
-## Good to know
-
-- The default maximum depth is 5 levels deep.
-- The pLevel parameter works for all collections and single types when using findOne and findMany methods.
-- Increasing the depth level may result in longer API response times.
-
-# Configuration
-
-You can configure the default depth globally through the plugin configuration.
-
-## Example configuration
-
-To customize the default depth, add or modify the config/plugins.js file as shown below:
-`config/plugins.js`
+### Examples
 
 ```
+# Use default depth (5)
+GET /api/articles?pLevel
+
+# Use custom depth
+GET /api/articles?pLevel=10
+
+# Ignore specific fields (comma-separated string)
+GET /api/articles?pLevel=5&pIgnore=author,tags
+
+# Ignore specific fields (array syntax)
+GET /api/articles?pLevel=5&pIgnore[0]=author&pIgnore[1]=tags
+```
+
+## Configuration
+
+Customize the default depth globally via `config/plugins.js` (or `.ts`):
+
+```js
+// config/plugins.js
 module.exports = ({ env }) => ({
   'strapi-v5-plugin-populate-deep': {
     config: {
-      defaultDepth: 3, // Default is 5
-    }
+      defaultDepth: 3, // default: 5
+    },
   },
 });
 ```
 
-This configuration will set the default depth to 3 levels across all API requests unless specified otherwise in the request itself.
+## Good to Know
 
-# Contributors
+- Default depth is **5** unless configured otherwise.
+- Works for all collections and single types (`findOne` and `findMany`).
+- `pIgnore` prevents circular population and can significantly reduce response size and query time.
+- Increasing depth may result in longer response times — use `pIgnore` to offset this.
+- `plugin::upload.file` related field is always excluded to avoid bloated responses.
+- `admin::user` (creator fields) can be excluded via `skipCreatorFields` config:
+
+```js
+module.exports = ({ env }) => ({
+  'strapi-v5-plugin-populate-deep': {
+    config: {
+      defaultDepth: 5,
+      skipCreatorFields: true,
+    },
+  },
+});
+```
+
+## Contributors
 
 <a href="https://github.com/NEDDL/strapi-v5-plugin-populate-deep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=NEDDL/strapi-v5-plugin-populate-deep" />
 </a>
 
-# Contributions
-
-This plugin is a fork of the original work by [Barelydead](https://github.com/Barelydead/) and can be found in the original [repository](https://github.com/Barelydead/strapi-plugin-populate-deep).
-
-The original idea for getting the populate structure was created by [tomnovotny7](https://github.com/tomnovotny7) and can be found in [this](https://github.com/strapi/strapi/issues/11836) github thread
-
-Thank you to [tooonuch](https://github.com/tooonuch) for fixing the dynamic zone population issue. He resolved a problem where components with the same attribute name were not populated correctly by using the `on` property. This improvement helps ensure proper population for all components.
-
-We appreciate and acknowledge all contributions made by the open-source community to the original project.
+Based on the original work by [Barelydead](https://github.com/Barelydead/strapi-plugin-populate-deep). Original populate concept by [tomnovotny7](https://github.com/tomnovotny7) ([thread](https://github.com/strapi/strapi/issues/11836)). Dynamic zone fix by [tooonuch](https://github.com/tooonuch).
