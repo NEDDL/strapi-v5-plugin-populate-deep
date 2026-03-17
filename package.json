@@ -7,7 +7,9 @@
     "description": "API helper to populate deep content structures for Strapi v5.",
     "kind": "plugin"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.23"
+  },
   "author": {
     "name": "Mustafa ONAL"
   },
