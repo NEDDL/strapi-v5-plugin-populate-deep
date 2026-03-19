@@ -39,7 +39,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   if (modelUid === "admin::user" && strapi
     .plugin("strapi-v5-plugin-populate-deep")
     ?.config("skipCreatorFields")) {
-    return undefined;
+    return false;
   }
 
   const populate = {};
