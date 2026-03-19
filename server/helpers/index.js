@@ -34,16 +34,12 @@ const getModelPopulationAttributes = (model) => {
 };
 
 const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
+  if (maxDepth <= 1) return false;
+
   const skipCreatorFields = strapi
     .plugin("strapi-v5-plugin-populate-deep")
     ?.config("skipCreatorFields");
-
-  if (maxDepth <= 1) {
-    return true;
-  }
-  if (modelUid === "admin::user" && skipCreatorFields) {
-    return undefined;
-  }
+  if (modelUid === "admin::user" && skipCreatorFields) return false;
 
   const populate = {};
   const model = strapi.getModel(modelUid);
@@ -77,7 +73,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
       }
     }
   }
-  return isEmpty(populate) ? true : { populate };
+  return isEmpty(populate) ? false : populate;
 };
 
 module.exports = {
