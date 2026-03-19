@@ -1,27 +1,12 @@
-const { isEmpty } = require("lodash/fp");
+const { isEmpty, mergeWith } = require("lodash/fp");
+
+const isObj = (val) => typeof val === "object" && val !== null;
 
 const deepAssign = (target, source) => {
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      if (typeof source[key] === "object" && source[key] !== null) {
-        if (
-          !target[key] ||
-          typeof target[key] !== "object" ||
-          target[key] === null
-        ) {
-          target[key] = source[key];
-        }
-        deepAssign(target[key], source[key]);
-      } else if (
-        !target[key] ||
-        typeof target[key] !== "object" ||
-        target[key] === null
-      ) {
-        target[key] = source[key];
-      }
-    }
-  }
-  return target;
+  return mergeWith(target, source, (objValue, srcValue) => {
+    // If existing target is an object/array, but incoming source is a primitive: Return existing object
+    if (isObj(objValue) && !isObj(srcValue)) return objValue;
+  });
 };
 
 const getModelPopulationAttributes = (model) => {
@@ -58,8 +43,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
         populate[key] = getFullPopulateObject(value.component, maxDepth - 1, ignore);
       } else if (value.type === "dynamiczone") {
         const dynamicPopulate = value.components.reduce((prev, cur) => {
-          const curPopulate = getFullPopulateObject(cur, maxDepth - 1, ignore);
-          return curPopulate === true ? prev : deepAssign(prev, { [cur]: curPopulate });
+          return deepAssign(prev, { [cur]: getFullPopulateObject(cur, maxDepth - 1) });
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };
       } else if (value.type === "relation") {
