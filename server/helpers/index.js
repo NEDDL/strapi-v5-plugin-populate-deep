@@ -58,7 +58,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
       } else if (value.type === "dynamiczone") {
         const dynamicPopulate = value.components.reduce((prev, cur) => {
           const curPopulate = getFullPopulateObject(cur, maxDepth - 1, ignore);
-          return curPopulate === true ? prev : deepAssign(prev, { [cur]: curPopulate });
+          return curPopulate === undefined ? prev : deepAssign(prev, { [cur]: curPopulate });
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };
       } else if (value.type === "relation") {
