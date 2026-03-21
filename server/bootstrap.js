@@ -22,6 +22,9 @@ module.exports = ({ strapi }) => {
     const ignore = typeof pIgnore === 'string' ? pIgnore.split(',').map(s => s.trim()) : Array.isArray(pIgnore) ? pIgnore : [pIgnore];
 
     const depth = pLevel ? parseInt(pLevel, 10) : defaultDepth;
-    params.populate = getFullPopulateObject(model.uid, depth, ignore).populate;
+    const populateObj = getFullPopulateObject(model.uid, depth, ignore);
+    if (populateObj && populateObj !== true) {
+      params.populate = populateObj.populate;
+    }
   });
 };
