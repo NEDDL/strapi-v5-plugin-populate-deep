@@ -1,4 +1,4 @@
-const { isEmpty } = require("lodash/fp");
+const isEmpty = (obj) => Object.keys(obj).length === 0;
 
 const deepAssign = (target, source) => {
   for (const key in source) {
