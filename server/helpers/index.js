@@ -54,10 +54,10 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
     if (ignore?.includes(key) || value.private === true) continue;
     if (value) {
       if (value.type === "component") {
-        populate[key] = getFullPopulateObject(value.component, maxDepth - 1, ignore);
+        populate[key] = getFullPopulateObject(value.component, maxDepth - 1, [...ignore]);
       } else if (value.type === "dynamiczone") {
         const dynamicPopulate = value.components.reduce((prev, cur) => {
-          const curPopulate = getFullPopulateObject(cur, maxDepth - 1, ignore);
+          const curPopulate = getFullPopulateObject(cur, maxDepth - 1, [...ignore]);
           return curPopulate === undefined ? prev : deepAssign(prev, { [cur]: curPopulate });
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };
@@ -66,7 +66,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
         const relationPopulate = getFullPopulateObject(
           value.target,
           key === "localizations" && maxDepth > 2 ? 1 : maxDepth - 1,
-          ignore
+          [...ignore]
         );
         if (relationPopulate) {
           populate[key] = relationPopulate;
