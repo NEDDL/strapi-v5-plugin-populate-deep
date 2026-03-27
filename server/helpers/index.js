@@ -62,14 +62,18 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
         }, {});
         populate[key] = isEmpty(dynamicPopulate) ? true : { on: dynamicPopulate };
       } else if (value.type === "relation") {
-        if (ignore?.includes(strapi.getModel(value.target).collectionName)) continue;
-        const relationPopulate = getFullPopulateObject(
-          value.target,
-          key === "localizations" && maxDepth > 2 ? 1 : maxDepth - 1,
-          [...ignore]
-        );
-        if (relationPopulate) {
-          populate[key] = relationPopulate;
+        if (key === "localizations") {
+          populate[key] = true;
+        } else {
+          if (ignore?.includes(strapi.getModel(value.target).collectionName)) continue;
+          const relationPopulate = getFullPopulateObject(
+            value.target,
+            maxDepth - 1,
+            [...ignore]
+          );
+          if (relationPopulate) {
+            populate[key] = relationPopulate;
+          }
         }
       } else if (value.type === "media") {
         populate[key] = true;
